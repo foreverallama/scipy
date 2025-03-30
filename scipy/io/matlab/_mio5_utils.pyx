@@ -596,8 +596,9 @@ cdef class VarReader5:
         # all miMATRIX types except the mxOPAQUE_CLASS have dims and a
         # name.
         if mc == mxOPAQUE_CLASS:
-            header.name = None
-            header.dims = None
+            header.name = self.read_int8_string()
+            type_system_name = self.read_int8_string()
+            class_name = self.read_int8_string()
             return header
         header.n_dims = self.read_into_int32s(header.dims_ptr, sizeof(header.dims_ptr))
         if header.n_dims > _MAT_MAXDIMS:
@@ -721,8 +722,6 @@ cdef class VarReader5:
             process = 0
         elif mc == mxOPAQUE_CLASS:
             arr = self.read_opaque(header)
-            arr = mio5p.MatlabOpaque(arr)
-            # to make them more re-writeable - don't squeeze
             process = 0
         # ensure we have read checksum.
         read_ok = self.cstream.all_data_read()
@@ -984,10 +983,5 @@ cdef class VarReader5:
         # Neither res nor the return value of this function are cdef'd as
         # cnp.ndarray, because that only adds useless checks with current
         # Cython (0.23.4).
-        res = np.empty((1,), dtype=OPAQUE_DTYPE)
-        res0 = res[0]
-        res0['s0'] = self.read_int8_string()
-        res0['s1'] = self.read_int8_string()
-        res0['s2'] = self.read_int8_string()
-        res0['arr'] = self.read_mi_matrix()
-        return res
+        res = self.read_mi_matrix()
+        return np.array(res[-2,0], dtype=OPAQUE_DTYPE)
