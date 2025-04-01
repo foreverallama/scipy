@@ -983,5 +983,27 @@ cdef class VarReader5:
         # Neither res nor the return value of this function are cdef'd as
         # cnp.ndarray, because that only adds useless checks with current
         # Cython (0.23.4).
-        res = self.read_mi_matrix()
-        return np.array(res[-2,0], dtype=OPAQUE_DTYPE)
+
+        cdef:
+            int i
+            cnp.int32_t dims_ptr[_MAT_MAXDIMS]
+            object dims
+            int n_dims
+
+        obj_metadata = self.read_mi_matrix()
+        n_dims = obj_metadata[1, 0]
+        if n_dims > _MAT_MAXDIMS:
+            raise ValueError('Too many dimensions (%d) for numpy arrays'
+                             % n_dims)
+
+        for i in range(n_dims):
+            dims_ptr[i] = obj_metadata[2 + i, 0]
+        dims = [dims_ptr[i] for i in range(n_dims)]
+
+        res = np.empty(1, dtype=OPAQUE_DTYPE)
+        res['object_reference'][0] = obj_metadata[0,0]
+        res['n_dims'][0] = n_dims
+        res['dims'][0] = dims
+        res['object_id'][0] = obj_metadata[-2, 0]
+        res['class_id'][0] = obj_metadata[-1, 0]
+        return res

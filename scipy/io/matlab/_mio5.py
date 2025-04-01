@@ -219,7 +219,6 @@ class MatFile5Reader(MatFileReader):
         hdr_dtype = MDTYPES[self.byte_order]['dtypes']['file_header']
         hdr = read_dtype(self.mat_stream, hdr_dtype)
         hdict['__header__'] = hdr['description'].item().strip(b' \t\n\000')
-        hdict["__subsystem_offset__"] = hdr["subsystem_offset"]
         v_major = hdr['version'] >> 8
         v_minor = hdr['version'] & 0xFF
         hdict['__version__'] = f'{v_major}.{v_minor}'
@@ -345,10 +344,6 @@ class MatFile5Reader(MatFileReader):
                 variable_names.remove(name)
                 if len(variable_names) == 0:
                     break
-
-        if mdict['__subsystem_offset__'] > 0:
-            # Process subsystem
-            pass
         if self.simplify_cells:
             return _simplify_cells(mdict)
         else:
