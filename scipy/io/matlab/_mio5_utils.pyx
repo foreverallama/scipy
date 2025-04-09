@@ -991,19 +991,6 @@ cdef class VarReader5:
             int n_dims
 
         obj_metadata = self.read_mi_matrix()
-        n_dims = obj_metadata[1, 0]
-        if n_dims > _MAT_MAXDIMS:
-            raise ValueError('Too many dimensions (%d) for numpy arrays'
-                             % n_dims)
-
-        for i in range(n_dims):
-            dims_ptr[i] = obj_metadata[2 + i, 0]
-        dims = [dims_ptr[i] for i in range(n_dims)]
-
         res = np.empty(1, dtype=OPAQUE_DTYPE)
-        res['object_reference'][0] = obj_metadata[0,0]
-        res['n_dims'][0] = n_dims
-        res['dims'][0] = dims
-        res['object_id'][0] = obj_metadata[-2, 0]
-        res['class_id'][0] = obj_metadata[-1, 0]
+        res['object_metadata'][0] = obj_metadata
         return res

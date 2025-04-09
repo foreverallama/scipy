@@ -278,9 +278,5 @@ class MatlabOpaque(np.ndarray):
 
 
 OPAQUE_DTYPE = np.dtype([
-    ('object_reference', np.uint32),
-    ('n_dims', np.uint32),
-    ('dims', object),
-    ('object_id', np.uint32),
-    ('class_id', np.uint32)
+    ('object_metadata',object)
 ])
