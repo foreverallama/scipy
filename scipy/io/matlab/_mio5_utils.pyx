@@ -984,7 +984,5 @@ cdef class VarReader5:
         # cnp.ndarray, because that only adds useless checks with current
         # Cython (0.23.4).
 
-        obj_metadata = self.read_mi_matrix()
-        res = np.empty(1, dtype=OPAQUE_DTYPE)
-        res['object_metadata'][0] = obj_metadata
+        res = self.read_mi_matrix()
         return res
