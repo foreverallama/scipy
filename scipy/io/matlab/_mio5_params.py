@@ -278,4 +278,4 @@ class MatlabOpaque(np.ndarray):
 
 
 OPAQUE_DTYPE = np.dtype(
-    [('s0', 'O'), ('s1', 'O'), ('s2', 'O'), ('arr', 'O')])
+    [('__object_metadata__', 'O')])

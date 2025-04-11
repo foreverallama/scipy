@@ -985,4 +985,4 @@ cdef class VarReader5:
         # Cython (0.23.4).
 
         res = self.read_mi_matrix()
-        return res
+        return np.array((res,), dtype=OPAQUE_DTYPE)
